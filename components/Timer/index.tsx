@@ -13,17 +13,17 @@ interface TimerProps {
 }
 
 interface TimerState {
-  elapsedTime: number;
+  startedTime: number;
+  diffTime: number;
 }
 
-class Timer extends React.Component<TimerProps, TimerState> {
-  private startTime: number = Date.now();
-
+class Timer extends React.Component<TimerProps,  TimerState> {
   constructor(props: TimerProps) {
     super(props);
 
     this.state = {
-      elapsedTime: 0,
+      startedTime: Date.now(),
+      diffTime: 0,
     };
   }
 
@@ -31,15 +31,25 @@ class Timer extends React.Component<TimerProps, TimerState> {
     requestAnimationFrame(this.refreshTime);
   }
 
-  public render() {
-    const diffTime = this.props.settingTime - Math.floor(this.state.elapsedTime / 1000);
-
-    return <StyledText key={this.props.settingTime}>{formattedTime(diffTime)}</StyledText>;
+  public componentDidUpdate(prevProps: TimerProps) {
+    if (this.props.settingTime !== prevProps.settingTime) {
+      this.setState({
+        startedTime: Date.now(),
+      });
+    }
   }
 
-  private refreshTime = () => {
+  public render() {
+    return (
+      <StyledText key={this.props.settingTime}>
+        {formattedTime(this.state.diffTime)}
+      </StyledText>
+    );
+  }
+
+  private refreshTime = (timestamp: number) => {
     this.setState({
-      elapsedTime: Date.now() - this.startTime,
+      diffTime: this.props.settingTime - Math.floor((Date.now() - this.state.startedTime) / 1000),
     });
 
     requestAnimationFrame(this.refreshTime);

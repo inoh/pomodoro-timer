@@ -7,7 +7,12 @@ import {
 import styled from 'styled-components/native';
 
 import Setting from './components/Setting';
+import SettingButton from './components/SettingButton';
 import Timer from './components/Timer';
+
+import {
+  timeLabel,
+} from './components/formattedTime';
 
 interface AppState {
   settingTime?: number;
@@ -35,31 +40,20 @@ class App extends React.Component<{}, AppState> {
 
         <Content>
           {settingTime &&
-            <Timer settingTime={settingTime} />
+            <Timer
+              settingTime={settingTime}
+            />
           }
         </Content>
 
         <Settings>
-          <Button
-            title="５分"
-            onPress={() => this.timerSetting(5 * 60)}
-          >
-            ５分
-          </Button>
-
-          <Button
-            title="２５分"
-            onPress={() => this.timerSetting(25 * 60)}
-          >
-            ２５分
-          </Button>
-
-          <Button
-            title="３０分"
-            onPress={() => this.timerSetting(30 * 60)}
-          >
-            ３０分
-          </Button>
+          {[5, 25, 30].map((minite) => (
+            <SettingButton
+              key={minite}
+              time={minite * 60}
+              onPress={() => this.timerSetting(minite * 60)}
+            />
+          ))}
         </Settings>
       </Container>
     );
